@@ -1,0 +1,24 @@
+# ---- Build output (Maven) ----
+target/
+
+# ---- IDEs ----
+.idea/
+*.iml
+out/
+.vscode/
+
+# ---- macOS ----
+.DS_Store
+
+# ---- Logs ----
+*.log
+logs/
+
+# ---- Secrets / local config ----
+.env
+.env.*
+!.env.example
+
+# ---- Frontend (added later) ----
+node_modules/
+dist/
