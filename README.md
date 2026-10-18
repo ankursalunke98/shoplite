@@ -25,3 +25,4 @@ docker compose ps           # postgres should show (healthy)
 | Step | What I learned |
 |---|---|
 | 01 | Monorepo layout, database-per-service with least-privilege users, config via environment variables, Docker volumes and init scripts |
+| 02 | product-service CRUD built three ways behind one interface: raw JDBC (PreparedStatement, ResultSet mapping, SQL injection demo, connection-leak demo), JdbcTemplate (template method, exception translation), Spring Data JPA (entity mapping, derived queries, ddl-auto=validate with Flyway) |
