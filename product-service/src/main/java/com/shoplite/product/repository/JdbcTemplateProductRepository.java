@@ -1,7 +1,6 @@
 package com.shoplite.product.repository;
 
 import com.shoplite.product.domain.Product;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Primary
 public class JdbcTemplateProductRepository implements ProductRepository{
 
     private static final String COLUMNS = "id, name, price, stock, created_at, updated_at";
