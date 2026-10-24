@@ -1,9 +1,11 @@
 package com.shoplite.product.web;
 
-import com.shoplite.product.domain.Product;
-import com.shoplite.product.repository.ProductRepository;
+import com.shoplite.product.service.ProductService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -12,46 +14,47 @@ import java.util.List;
 @RequestMapping("/api/v1/products")
 public class ProductController {
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public ProductController(ProductRepository productRepository){
-        this.productRepository = productRepository;
+    public ProductController(ProductService productService){
+        this.productService = productService;
     }
 
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody ProductRequest request){
-        Product toSave = new Product(null, request.name(), request.price(), request.stock(), null, null);
-        Product saved = productRepository.save(toSave);
-        return ResponseEntity.created(URI.create("/api/v1/products" + saved.getId())).body(saved);
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request){
+        ProductResponse created = productService.create(request);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(created.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(created);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable Long id){
-        return ResponseEntity.of(productRepository.findById(id));
+    public ProductResponse getById(@PathVariable Long id){
+        return productService.getById(id);
     }
 
     @GetMapping
-    public List<Product> getAll(){
-        return productRepository.findAll();
+    public List<ProductResponse> getAll(){
+        return productService.getAll();
     }
 
     @GetMapping("/search")
-    public List<Product> search(@RequestParam String name){
-        return productRepository.findByName(name);
+    public List<ProductResponse> search(@RequestParam String name){
+        return productService.searchByName(name);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody ProductRequest request){
-        Product toUpdate = new Product(id, request.name(), request.price(), request.stock(), null, null);
-        return ResponseEntity.of(productRepository.update(toUpdate));
+    public ProductResponse update(@PathVariable Long id,@Valid @RequestBody ProductRequest request){
+        return productService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        if (productRepository.deleteById(id)){
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){
+        productService.delete(id);
     }
 
 }
